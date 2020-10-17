@@ -1,0 +1,19 @@
+/*
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+*/
+/* 
+    Created on : Oct 15, 2020, 8:50:11 PM
+    Author     : KevinHa
+*/
+
+.Node{
+    -fx-background-color: #00cccc;
+    -fx-background-radius: 30;
+    -fx-border-color: #000000;
+    -fx-border-radius: 30;
+    -fx-font-size: 25;
+    
+    
+}
