@@ -7,13 +7,23 @@ and open the template in the editor.
     Created on : Oct 15, 2020, 8:50:11 PM
     Author     : KevinHa
 */
-
+.VisualPane{
+    -fx-background-color: #003333;
+    
+}
 .Node{
     -fx-background-color: #00cccc;
     -fx-background-radius: 30;
     -fx-border-color: #000000;
     -fx-border-radius: 30;
-    -fx-font-size: 25;
-    
+    -fx-font-size: 25; 
+}
+.Node_Hightline{
+    -fx-background-color: #ffff00;
+    -fx-background-radius: 30;
+    -fx-border-color: #ff0033;
+    -fx-border-radius: 30;
+    -fx-border-width: 3;
+    -fx-font-size: 25; 
     
 }

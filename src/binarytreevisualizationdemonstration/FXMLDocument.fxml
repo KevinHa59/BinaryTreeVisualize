@@ -6,6 +6,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
 
 <AnchorPane id="AnchorPane" fx:id="pane_root" prefHeight="800.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="binarytreevisualizationdemonstration.FXMLDocumentController">
    
@@ -13,17 +15,83 @@
         
       <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <AnchorPane prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="118.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
                <children>
-                  <TextField fx:id="txt_key" layoutX="58.0" layoutY="50.0" prefHeight="25.0" prefWidth="89.0" />
-                  <Label layoutX="32.0" layoutY="54.0" text="Key" />
-                  <Button layoutX="156.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#OnAddNodeClicked" text="Add" />
-                  <Separator layoutX="115.0" layoutY="85.0" prefWidth="200.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Separator layoutX="115.0" layoutY="85.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+                  <Separator layoutX="305.0" layoutY="-49.0" orientation="VERTICAL" prefHeight="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.topAnchor="0.0" />
+                  <Pane layoutX="14.0" layoutY="3.0" prefHeight="112.0" prefWidth="286.0">
+                     <children>
+                        <TextField fx:id="txt_key" alignment="CENTER" layoutX="14.0" layoutY="46.0" prefHeight="56.0" prefWidth="74.0">
+                           <font>
+                              <Font size="27.0" />
+                           </font>
+                        </TextField>
+                        <Label text="Add &amp; Find Node">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <Button layoutX="93.0" layoutY="41.0" mnemonicParsing="false" onMouseClicked="#OnAddNodeClicked" prefHeight="22.0" prefWidth="70.0" text="Add">
+                           <font>
+                              <Font name="System Bold" size="15.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="93.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnFindNodeClicked" prefHeight="25.0" prefWidth="70.0" text="Find">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Button>
+                        <Button layoutX="163.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnResetStyleNodeClicked" text="Reset Style">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Button>
+                        <Label layoutX="14.0" layoutY="25.0" text="Key">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </Pane>
+                  <Pane layoutX="311.0" prefHeight="118.0" prefWidth="292.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
+                     <children>
+                        <Label text="Lowest Common Ancestor">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txt_lca1" alignment="CENTER" layoutX="8.0" layoutY="45.0" prefHeight="56.0" prefWidth="74.0">
+                           <font>
+                              <Font size="27.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="92.0" layoutY="25.0" text="Node">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="txt_lca2" alignment="CENTER" layoutX="92.0" layoutY="45.0" prefHeight="56.0" prefWidth="74.0">
+                           <font>
+                              <Font size="27.0" />
+                           </font>
+                        </TextField>
+                        <Label layoutX="8.0" layoutY="25.0" text="Node">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Label>
+                        <Button layoutX="173.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnFindLCANodeClicked" prefHeight="25.0" prefWidth="70.0" text="Find">
+                           <font>
+                              <Font size="15.0" />
+                           </font>
+                        </Button>
+                     </children>
+                  </Pane>
                </children>
             </AnchorPane>
          </top>
          <center>
-            <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+            <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" styleClass="VisualPane" BorderPane.alignment="CENTER" />
          </center>
       </BorderPane>
    </children>
