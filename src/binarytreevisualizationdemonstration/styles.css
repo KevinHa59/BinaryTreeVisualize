@@ -27,3 +27,69 @@ and open the template in the editor.
     -fx-font-size: 25; 
     
 }
+.Pane_Top{
+    -fx-background-color: #001d1d;
+}
+.Pane_Header{
+    -fx-text-fill: #00cccc;
+}
+.text-field{
+    -fx-background-color: #003333;
+    -fx-background-radius: 40;
+    -fx-border-color: #00cccc;
+    -fx-border-radius: 40;
+    -fx-text-fill: #00cccc;
+    
+}
+.Button{
+    -fx-background-color: #00cccc;
+    -fx-text-fill: #003333;
+    -fx-border-color: #004444;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+.Button:hover{
+    -fx-background-color: #00ffce;
+    -fx-text-fill: #003333;
+    -fx-border-color: #004444;
+    -fx-font-weight: bold;
+    -fx-font-size: 16;
+}
+.Pane_Control{
+    -fx-border-color: #003333;
+
+    -fx-background-color: #004444;
+
+    
+}
+.Pane_Output_Message{
+    -fx-background-color: #001d1d;
+}
+@font-face{
+    src: url('SourceCodePro-Light.ttf');
+    
+}
+.Pane_Message{
+    -fx-text-fill:#368787;
+    -fx-font-size: 15;
+    -fx-font-family: 'SourceCodePro-Light';
+}
+.Pane_Message_Error{
+    -fx-text-fill: #cc0000;
+    -fx-font-size: 15;
+    -fx-font-family: 'SourceCodePro-Light';
+}
+.scroll-pane{
+   -fx-background-color:transparent;
+}
+.scroll-pane > .viewport {  
+   -fx-background-color: #001d1d;
+}
+.scroll-pane-visual{
+   -fx-background-color:transparent;
+   -fx-border-width: 0;
+}
+.scroll-pane-visual > .viewport {  
+   -fx-background-color: #003333;
+   -fx-border-width: 0;
+}

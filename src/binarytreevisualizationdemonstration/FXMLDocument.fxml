@@ -1,98 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" fx:id="pane_root" prefHeight="800.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="binarytreevisualizationdemonstration.FXMLDocumentController">
+<AnchorPane id="AnchorPane" fx:id="pane_root" prefHeight="900.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="binarytreevisualizationdemonstration.FXMLDocumentController">
    
     <children>
         
-      <BorderPane prefHeight="200.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <BorderPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #000000;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <top>
-            <AnchorPane prefHeight="118.0" prefWidth="1000.0" BorderPane.alignment="CENTER">
+            <AnchorPane prefHeight="118.0" prefWidth="1000.0" styleClass="Pane_Top" BorderPane.alignment="CENTER">
                <children>
-                  <Separator layoutX="115.0" layoutY="85.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
-                  <Separator layoutX="305.0" layoutY="-49.0" orientation="VERTICAL" prefHeight="200.0" AnchorPane.bottomAnchor="1.0" AnchorPane.topAnchor="0.0" />
-                  <Pane layoutX="14.0" layoutY="3.0" prefHeight="112.0" prefWidth="286.0">
+                  <HBox prefHeight="100.0" prefWidth="200.0" spacing="1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                      <children>
-                        <TextField fx:id="txt_key" alignment="CENTER" layoutX="14.0" layoutY="46.0" prefHeight="56.0" prefWidth="74.0">
-                           <font>
-                              <Font size="27.0" />
-                           </font>
-                        </TextField>
-                        <Label text="Add &amp; Find Node">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Label>
-                        <Button layoutX="93.0" layoutY="41.0" mnemonicParsing="false" onMouseClicked="#OnAddNodeClicked" prefHeight="22.0" prefWidth="70.0" text="Add">
-                           <font>
-                              <Font name="System Bold" size="15.0" />
-                           </font>
-                        </Button>
-                        <Button layoutX="93.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnFindNodeClicked" prefHeight="25.0" prefWidth="70.0" text="Find">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Button>
-                        <Button layoutX="163.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnResetStyleNodeClicked" text="Reset Style">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Button>
-                        <Label layoutX="14.0" layoutY="25.0" text="Key">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Label>
+                        <VBox alignment="CENTER" prefHeight="115.0" prefWidth="140.0" spacing="3.0" styleClass="Pane_Control">
+                           <children>
+                              <Label alignment="CENTER" onMouseClicked="#OnNewTreeClicked" prefHeight="50.0" prefWidth="120.0" styleClass="Button" text="New Tree">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="20.0" layoutY="11.0" onMouseClicked="#OnRandomTreeClicked" prefHeight="50.0" prefWidth="120.0" styleClass="Button" text="Random Tree">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                        <Pane prefHeight="112.0" prefWidth="286.0" styleClass="Pane_Control">
+                           <children>
+                              <TextField fx:id="txt_key" alignment="CENTER" layoutX="14.0" layoutY="50.0" prefHeight="60.0" prefWidth="60.0">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="62.0" layoutY="-1.0" styleClass="Pane_Header" text="Add &amp; Find Node" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="32.0" layoutY="29.0" styleClass="Pane_Header" text="Key">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="95.0" layoutY="43.0" onMouseClicked="#OnAddNodeClicked" prefHeight="33.0" prefWidth="70.0" styleClass="Button" text="Add">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="95.0" layoutY="76.0" onMouseClicked="#OnFindNodeClicked" prefHeight="33.0" prefWidth="70.0" styleClass="Button" text="Find">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="165.0" layoutY="76.0" onMouseClicked="#OnResetStyleNodeClicked" prefHeight="33.0" prefWidth="99.0" styleClass="Button" text="Reset Style">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Pane>
+                        <Pane prefHeight="118.0" prefWidth="292.0" styleClass="Pane_Control">
+                           <children>
+                              <Label layoutX="23.0" layoutY="-1.0" styleClass="Pane_Header" text="Lowest Common Ancestor" underline="true">
+                                 <font>
+                                    <Font name="System Bold" size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txt_lca1" alignment="CENTER" layoutX="14.0" layoutY="49.0" prefHeight="60.0" prefWidth="60.0">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="117.0" layoutY="29.0" styleClass="Pane_Header" text="Key">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <TextField fx:id="txt_lca2" alignment="CENTER" layoutX="98.0" layoutY="49.0" prefHeight="60.0" prefWidth="60.0">
+                                 <font>
+                                    <Font size="27.0" />
+                                 </font>
+                              </TextField>
+                              <Label layoutX="32.0" layoutY="29.0" styleClass="Pane_Header" text="Key">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="174.0" layoutY="63.0" onMouseClicked="#OnFindLCANodeClicked" prefHeight="33.0" prefWidth="70.0" styleClass="Button" text="Find">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </Pane>
                      </children>
-                  </Pane>
-                  <Pane layoutX="311.0" prefHeight="118.0" prefWidth="292.0" AnchorPane.bottomAnchor="0.0" AnchorPane.topAnchor="0.0">
-                     <children>
-                        <Label text="Lowest Common Ancestor">
-                           <font>
-                              <Font size="24.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_lca1" alignment="CENTER" layoutX="8.0" layoutY="45.0" prefHeight="56.0" prefWidth="74.0">
-                           <font>
-                              <Font size="27.0" />
-                           </font>
-                        </TextField>
-                        <Label layoutX="92.0" layoutY="25.0" text="Node">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Label>
-                        <TextField fx:id="txt_lca2" alignment="CENTER" layoutX="92.0" layoutY="45.0" prefHeight="56.0" prefWidth="74.0">
-                           <font>
-                              <Font size="27.0" />
-                           </font>
-                        </TextField>
-                        <Label layoutX="8.0" layoutY="25.0" text="Node">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Label>
-                        <Button layoutX="173.0" layoutY="74.0" mnemonicParsing="false" onMouseClicked="#OnFindLCANodeClicked" prefHeight="25.0" prefWidth="70.0" text="Find">
-                           <font>
-                              <Font size="15.0" />
-                           </font>
-                        </Button>
-                     </children>
-                  </Pane>
+                  </HBox>
                </children>
             </AnchorPane>
          </top>
          <center>
-            <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" styleClass="VisualPane" BorderPane.alignment="CENTER" />
+            <ScrollPane style="-fx-background-color: transparent;" styleClass="scroll-pane-visual" BorderPane.alignment="CENTER">
+               <content>
+                  <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" styleClass="VisualPane" />
+               </content>
+            </ScrollPane>
          </center>
+         <bottom>
+            <AnchorPane prefHeight="200.0" prefWidth="200.0" styleClass="Pane_Output_Message" BorderPane.alignment="CENTER">
+               <children>
+                  <ScrollPane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: transparent;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+                     <content>
+                        <VBox fx:id="vbox_actionNotification" prefHeight="200.0" prefWidth="982.0" style="-fx-background-color: transparent;" />
+                     </content>
+                  </ScrollPane>
+               </children>
+            </AnchorPane>
+         </bottom>
       </BorderPane>
    </children>
 </AnchorPane>

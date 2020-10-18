@@ -6,6 +6,8 @@
 package binarytreevisualizationdemonstration;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Vector;
 import javafx.event.ActionEvent;
@@ -16,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 
@@ -38,6 +41,8 @@ public class FXMLDocumentController implements Initializable {
     private TextField txt_lca1;
     @FXML
     private TextField txt_lca2;
+    @FXML
+    private VBox vbox_actionNotification;
     
     
     @Override
@@ -68,9 +73,44 @@ public class FXMLDocumentController implements Initializable {
     
     @FXML
     private void OnFindLCANodeClicked(MouseEvent event) {
-        findLowestCommonAncester(Integer.parseInt(txt_lca1.getText()), Integer.parseInt(txt_lca2.getText()));
-    }
 
+        if(txt_lca1.getText().length() == 0 || txt_lca2.getText().length() == 0){
+            AddMessage("> Error: Node 1 or/and Node 2 is/are empty", true);
+            return;
+        }else{
+            findLowestCommonAncester(Integer.parseInt(txt_lca1.getText()), Integer.parseInt(txt_lca2.getText()));
+        }
+    }
+    @FXML
+    private void OnNewTreeClicked(MouseEvent event) {
+        newTree();
+    }
+    @FXML
+    private void OnRandomTreeClicked(MouseEvent event) {
+        randomTree();
+    }
+    void newTree(){
+        if(root == null){
+            AddMessage("> New Tree - blank", false);
+            return;
+        }
+        root = null;
+        pane_visual.getChildren().clear();
+        previousKey = null;
+        AddMessage("> New Tree - deleted Old Binary Tree", false);
+    }
+    
+    void randomTree(){
+        newTree();
+        AddMessage("> Random Tree - start generating new random binary tree", false);
+        Random rand = new Random();
+        for(int i = 0; i < 15; i++){
+            addNode(rand.nextInt(50));
+        }
+        resetPreviousNodeStyle();
+        AddMessage("> Random Tree - generating new random binary tree completed", false);
+    }
+    
     
     void TravesalTree(Node focusNode){
         
@@ -87,7 +127,12 @@ public class FXMLDocumentController implements Initializable {
     
     // Add Node
     public void addNode(int key){
+        String message = "";
+        if(root != null && findNode(key, false) == true){
+            return;
+        }
         resetPreviousNodeStyle();
+        
         
         Label newLabel = new Label(key+"");
         NodeLabels.add(newLabel);
@@ -99,6 +144,7 @@ public class FXMLDocumentController implements Initializable {
         Node newNode = new Node(key);
         
         if(root == null){
+            message = "> Add Node " + key + " as root.";
             newNode.setX(500);
             newNode.setY(50);
             newNode.setDistance(200);
@@ -115,6 +161,7 @@ public class FXMLDocumentController implements Initializable {
                 if(key < focusNode.key){
                     focusNode = focusNode.leftChild;
                     if(focusNode == null){
+                        message = "> Add Node " + key + " on the left.";
                         newNode.setX(parent.getX() - parent.getDistance());
                         newNode.setY(parent.getY() + 100);
                         newNode.setDistance(parent.getDistance()/2);
@@ -126,6 +173,7 @@ public class FXMLDocumentController implements Initializable {
                 }else{
                     focusNode = focusNode.rightChild;
                     if(focusNode == null){
+                        message = "> Add Node " + key + " on the right.";
                         newNode.setX(parent.getX() + parent.getDistance());
                         newNode.setY(parent.getY() + 100);
                         newNode.setDistance(parent.getDistance()/2);
@@ -139,6 +187,8 @@ public class FXMLDocumentController implements Initializable {
             }
             
         }
+        AddMessage(message, false);
+        
         newLabel.setLayoutX(newNode.getX());
         newLabel.setLayoutY(newNode.getY());
         
@@ -148,7 +198,9 @@ public class FXMLDocumentController implements Initializable {
     // Find Node
     String previousKey = null;
     public boolean findNode(int key, boolean highlight){
+        String message = "";
         boolean result = true;
+        
         resetPreviousNodeStyle();
 
         Node focusNode = root;
@@ -175,12 +227,17 @@ public class FXMLDocumentController implements Initializable {
             }
         }
         if(focusNode != null){
+            message = "> Find Node " + key + " - Found";
+            
             if(highlight == true){
                 focusNode.getLabelNode().getStyleClass().add("Node_Hightline");
             }
             previousKey = key+"";   
             result = true;
+        }else{
+            message = "> Find Node " + key + " - Not Found";
         }
+        AddMessage(message, false);
         return result;
     }
 
@@ -213,17 +270,24 @@ public class FXMLDocumentController implements Initializable {
 
     // Find Lowest Common Ancester
     public void findLowestCommonAncester(int key1, int key2){
+        String message = "";
+        boolean error = false;
         Node focusNode = root;
         
         if(findNode(key1, false) == false || findNode(key2, false) == false){
+            message = "> Error: " + key1 + " and/or " + key2 + " is/are not existed in the tree.";
+            error = true;
+            AddMessage(message, error);
             return;
         }else{
-        // case 1  key1 < focusNode < key2 or key1 > focusNode > key2
             while(true){
                 System.out.println(key1 + " " + focusNode.key + " " + key2);
                 System.out.println((focusNode.key < key1 && focusNode.key > key2) || (focusNode.key > key1 && focusNode.key < key2));
                 if((focusNode.key <= key1 && focusNode.key >= key2) || (focusNode.key >= key1 && focusNode.key <= key2)){
                     findNode(focusNode.key, true);
+                    message = "> Lowest common ancester of " + key1 + " and " + key2 + " - " + focusNode.key;
+                    error = false;
+                    AddMessage(message, error);
                     return;
                 }else {
                     if(focusNode.key > key1 && focusNode.key > key2){
@@ -234,7 +298,21 @@ public class FXMLDocumentController implements Initializable {
                 }
             }
         }
+        
     }
+
+    public void AddMessage(String message, boolean error){
+        Label l = new Label();
+        l.setText(message);
+        if(error == false){
+            l.getStyleClass().add("Pane_Message");
+        }else{
+            l.getStyleClass().add("Pane_Message_Error");
+        }
+        vbox_actionNotification.getChildren().add(0,l);
+    }
+
+    
     
     class Node {
         
