@@ -79,11 +79,40 @@ and open the template in the editor.
     -fx-font-size: 15;
     -fx-font-family: 'SourceCodePro-Light';
 }
+.Pane_Message_Green{
+    -fx-text-fill: #009933;
+    -fx-font-size: 15;
+    -fx-font-family: 'SourceCodePro-Light';
+}
 .scroll-pane{
    -fx-background-color:transparent;
 }
 .scroll-pane > .viewport {  
    -fx-background-color: #001d1d;
+}
+.scroll-bar:horizontal, .scroll-bar:vertical{
+    -fx-background-color: transparent;
+}
+.scroll-list{
+    -fx-padding: 10 0 10 0;
+}
+.scroll-bar{
+    -fx-background-color: transparent;
+    
+}
+.scroll-bar:horizontal .thumb,
+.scroll-bar:vertical .thumb{
+    -fx-background-color: #00cccc;
+    -fx-border-color: transparent;
+    -fx-background-radius: 5em;
+}
+.scroll-bar:horizontal > .increment-button,
+.scroll-bar:horizontal > .decrement-button {
+    -fx-background-color: transparent;
+}
+.scroll-bar:vertical > .increment-button,
+.scroll-bar:vertical > .decrement-button {
+    -fx-background-color: transparent;
 }
 .scroll-pane-visual{
    -fx-background-color:transparent;

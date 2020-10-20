@@ -42,10 +42,10 @@
                            <children>
                               <TextField fx:id="txt_key" alignment="CENTER" layoutX="14.0" layoutY="50.0" prefHeight="60.0" prefWidth="60.0">
                                  <font>
-                                    <Font size="27.0" />
+                                    <Font size="23.0" />
                                  </font>
                               </TextField>
-                              <Label layoutX="62.0" layoutY="-1.0" styleClass="Pane_Header" text="Add &amp; Find Node" underline="true">
+                              <Label layoutX="25.0" layoutY="-1.0" styleClass="Pane_Header" text="Add, Find &amp; Delete Node" underline="true">
                                  <font>
                                     <Font name="System Bold" size="20.0" />
                                  </font>
@@ -70,6 +70,11 @@
                                     <Font size="16.0" />
                                  </font>
                               </Label>
+                              <Label alignment="CENTER" layoutX="165.0" layoutY="43.0" onMouseClicked="#OnDeleteNodeClicked" prefHeight="33.0" prefWidth="99.0" styleClass="Button" text="Delete">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
                            </children>
                            <HBox.margin>
                               <Insets />
@@ -84,7 +89,7 @@
                               </Label>
                               <TextField fx:id="txt_lca1" alignment="CENTER" layoutX="14.0" layoutY="49.0" prefHeight="60.0" prefWidth="60.0">
                                  <font>
-                                    <Font size="27.0" />
+                                    <Font size="23.0" />
                                  </font>
                               </TextField>
                               <Label layoutX="117.0" layoutY="29.0" styleClass="Pane_Header" text="Key">
@@ -94,7 +99,7 @@
                               </Label>
                               <TextField fx:id="txt_lca2" alignment="CENTER" layoutX="98.0" layoutY="49.0" prefHeight="60.0" prefWidth="60.0">
                                  <font>
-                                    <Font size="27.0" />
+                                    <Font size="23.0" />
                                  </font>
                               </TextField>
                               <Label layoutX="32.0" layoutY="29.0" styleClass="Pane_Header" text="Key">
@@ -115,9 +120,9 @@
             </AnchorPane>
          </top>
          <center>
-            <ScrollPane style="-fx-background-color: transparent;" styleClass="scroll-pane-visual" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="scroll_view" hbarPolicy="NEVER" style="-fx-background-color: transparent;" styleClass="scroll-pane-visual" BorderPane.alignment="CENTER">
                <content>
-                  <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" styleClass="VisualPane" />
+                  <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" />
                </content>
             </ScrollPane>
          </center>
