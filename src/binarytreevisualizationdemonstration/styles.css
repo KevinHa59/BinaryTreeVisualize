@@ -150,6 +150,31 @@ and open the template in the editor.
    -fx-background-color: #2b2b2b;
    -fx-border-width: 0;
 }
+
+.customNodePane{
+    -fx-background-color: #46494c;
+    -fx-background-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: #000000;
+    -fx-border-radius: 5;
+    -fx-padding: 0 0 10 10;
+}
+.customNodeHeader{
+    -fx-text-fill: #bbbbbb;
+    -fx-font-size: 15;
+    -fx-font-weight: bold;
+    -fx-padding: 5 0 10 10;
+    
+}
+.customNodeTextfield{
+    -fx-background-color: #282b2d;
+    -fx-background-radius: 40;
+    -fx-border-color: #646464;
+    -fx-border-radius: 40;
+    -fx-text-fill: #bbbbbb;
+    -fx-font-size: 18;
+}
+
 .subMenu{
     -fx-background-color: #bbbbbb;
     -fx-background-radius: 5;

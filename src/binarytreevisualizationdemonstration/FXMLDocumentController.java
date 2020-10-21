@@ -11,10 +11,14 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.ResourceBundle;
 import java.util.Timer;
+import java.util.TimerTask;
+
 import java.util.Vector;
-import java.util.concurrent.TimeUnit;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
@@ -25,7 +29,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
@@ -34,10 +40,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.util.Duration;
 
 /**
  *
@@ -62,7 +71,6 @@ public class FXMLDocumentController implements Initializable {
     private VBox vbox_actionNotification;
     @FXML
     private ScrollPane scroll_view;
-    private CheckBox cbox_delLeft;
     @FXML
     private TextField txt_findKey;
     @FXML
@@ -76,12 +84,11 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private ScrollPane scroll_output;
     
-    
+    Vector<String> NodeDetailTitle;
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         NodeLabels = new Vector<Integer>();
-
         
         pane_visual.prefWidthProperty().bind(scroll_view.widthProperty());
         pane_visual.prefHeightProperty().bind(scroll_view.heightProperty());
@@ -98,11 +105,17 @@ public class FXMLDocumentController implements Initializable {
             AddMessage("> Add Node - null", "red");
             return;
         }
-        AddMessage("> Add Node - " + txt_key.getText(), "");
-        addNode(Integer.parseInt(txt_key.getText()));
-        NodeLabels.add(Integer.parseInt(txt_key.getText().toString()));
-        txt_key.setText(null);
-        BuildVisualTree();
+        if(NodeDetailTitle == null){
+            AddMessage("> Add Node - " + txt_key.getText(), "");
+            addNode(Integer.parseInt(txt_key.getText()));
+            NodeLabels.add(Integer.parseInt(txt_key.getText().toString()));
+            txt_key.setText("");
+            BuildVisualTree();
+        }else{
+
+            addNode(Integer.parseInt(txt_key.getText()), NodeDetailTitle);
+            
+        }
     }
     @FXML
     private void OnFindNodeClicked(MouseEvent event) {
@@ -160,6 +173,10 @@ public class FXMLDocumentController implements Initializable {
         
     }
     
+    @FXML
+    private void OnCustomNodeClicked(MouseEvent event) {
+        customNodeDetail();
+    }
     void newTree(){
         
         if(root == null){
@@ -212,7 +229,82 @@ public class FXMLDocumentController implements Initializable {
         }
         resetPreviousNodeStyle(root);
     }
-    
+    // Custom Node Detail
+    public void customNodeDetail(){
+        Vector<TextField> v = new Vector<TextField>();
+        
+        Pane container = new Pane();
+        container.getStyleClass().add("customNodePane");
+        
+        BorderPane br = new BorderPane();
+        
+        VBox list = new VBox();
+        list.setPadding(new Insets(0, 3, 0, 3));
+        list.setSpacing(1);
+        
+        Label title = new Label("Custom Node Detail");
+        title.getStyleClass().add("customNodeHeader");
+        
+        HBox bottomContainer =new HBox();
+        
+        Button addDetail = new Button("Add");
+        Button apply = new Button("Apply");
+        addDetail.getStyleClass().add("Button");
+        apply.getStyleClass().add("Button");
+        bottomContainer.getChildren().add(addDetail);
+        bottomContainer.getChildren().add(apply);
+        
+        addDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                HBox detailContainer =  new HBox();
+                TextField txt_detail = new TextField();
+                txt_detail.getStyleClass().add("customNodeTextfield");
+                Button btn_deleteDetail = new Button();
+                btn_deleteDetail.getStyleClass().add("Button");
+                txt_detail.setPrefWidth(200);
+                btn_deleteDetail.setText("X");
+                
+                btn_deleteDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        list.getChildren().remove(detailContainer);
+                        v.remove(txt_detail);
+                    }
+                });
+                
+                detailContainer.getChildren().add(txt_detail);
+                detailContainer.getChildren().add(btn_deleteDetail);
+                v.add(txt_detail);
+                
+                list.getChildren().add(detailContainer);
+            }
+        });
+
+        apply.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                NodeDetailTitle = new Vector<String>();
+                for(int i = 0; i < v.size();i++){
+                    System.out.println("Text " + v.get(i).getText());
+                    NodeDetailTitle.add(v.get(i).getText());
+                }
+                System.out.println("v size " + v.size());
+                if(v.size() == 0){
+                    System.out.println("v size " + v);
+                    NodeDetailTitle = null;
+                }
+                pane_visual.getChildren().remove(container);
+            }
+        });
+        br.setTop(title);
+        br.setCenter(list);
+        br.setBottom(bottomContainer);
+        
+        container.getChildren().add(br);
+        pane_visual.getChildren().add(container);
+    }
+
     // Add Node
     public void addNode(int key){
         
@@ -253,12 +345,114 @@ public class FXMLDocumentController implements Initializable {
             }
             
         }
+        
         newNode.AddNodeLabel();
         if(root.key != key){
             newNode.DrawLine();
         }
     }
+    
+    // Add Node Custom
+    public void addNode(int key, Vector<String> detail){
+        if(root != null && findNode(key, root, false, false) == true){
+            return;
+        }
+        resetPreviousNodeStyle(root);
 
+        previousKey = key+"";
+        Node newNode = new Node(key);
+        if(root == null){
+            root = newNode;
+            
+        }else{
+            Node parent;
+            Node focusNode = root;
+            boolean cont = true;
+            while(cont == true){
+                parent = focusNode;
+                if(key < focusNode.key){
+                    focusNode = focusNode.leftChild;
+                    if(focusNode == null){
+                        newNode.parent = parent;
+                        parent.leftChild = newNode;
+                        newNode.setIsParentLeft(false);
+                        cont = false;
+                    }
+                }else{
+                    focusNode = focusNode.rightChild;
+                    if(focusNode == null){
+                        newNode.parent = parent;
+                        parent.rightChild = newNode;
+                        newNode.setIsParentLeft(true);
+                        cont = false;
+                    }
+                }
+                
+            }
+            
+        }
+        
+        addNodeCustomPane(detail, newNode);
+    }
+    
+    // Node Custom Pane
+    public void addNodeCustomPane(Vector<String> titleList, Node newNode){
+        Vector<TextField> detail = new Vector<TextField>();
+        Vector<String> detailText = new Vector<String>();
+        Pane container = new Pane();
+        container.getStyleClass().add("customNodePane");
+        
+        BorderPane br = new BorderPane();
+        
+        VBox list = new VBox();
+        list.setPadding(new Insets(0, 3, 0, 3));
+        list.setSpacing(1);
+        
+        Label header = new Label("Custome Node Detail");
+        header.getStyleClass().add("customNodeHeader");
+
+        for(int i =0; i < titleList.size(); i++){
+            HBox detailItemContainer =new HBox();
+            Label title = new Label();
+            title.setText(titleList.get(i).toString());
+            title.getStyleClass().add("customNodeHeader");
+            TextField txt_detail = new TextField();
+            txt_detail.getStyleClass().add("customNodeTextfield");
+            detailItemContainer.getChildren().add(title);
+            detailItemContainer.getChildren().add(txt_detail);
+            list.getChildren().add(detailItemContainer);
+            detail.add(txt_detail);
+        }
+        
+        
+        
+        
+        Button addDetail = new Button("Add");
+        addDetail.getStyleClass().add("Button");
+
+        addDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                for(int i = 0; i < detail.size();i++){
+                    detailText.add(i, detail.get(i).getText());
+                    System.out.println("" + detailText.get(i));
+                }
+                newNode.setNodeDetails(detailText);
+                newNode.AddNodeLabel();
+                if(root.key != newNode.key){
+                    newNode.DrawLine();
+                }
+                pane_visual.getChildren().remove(container);
+            }
+        });
+        
+        br.setTop(header);
+        br.setCenter(list);
+        br.setBottom(addDetail);
+        txt_key.setText("");
+        container.getChildren().add(br);
+        pane_visual.getChildren().add(container);
+    }
     // Find Node
     String previousKey = null;
     public boolean findNode(int key, Node startNode, boolean highlight, boolean isLMA){
@@ -468,6 +662,8 @@ public class FXMLDocumentController implements Initializable {
 
         VBox list = new VBox();
         
+        Label selection0 = new Label("Node Detail");
+        selection0.getStyleClass().add("subMenuButton");
         Label selection1 = new Label("Find path from root");
         selection1.getStyleClass().add("subMenuButton");
         Label selection2 = new Label("Delete node");
@@ -475,6 +671,8 @@ public class FXMLDocumentController implements Initializable {
         Label selection3 = new Label("Close");
         selection3.getStyleClass().add("subMenuButton");
         
+        
+        selection0.prefWidthProperty().bind(menu.widthProperty());
         selection1.prefWidthProperty().bind(menu.widthProperty());
         selection2.prefWidthProperty().bind(menu.widthProperty());
         selection3.prefWidthProperty().bind(menu.widthProperty());
@@ -494,7 +692,7 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public void handle(MouseEvent event) {
                 deleteNode(focusNode.key);
-                txt_key.setText(null);
+                txt_key.setText("");
             }
         });
         // Close Sub menu
@@ -505,7 +703,9 @@ public class FXMLDocumentController implements Initializable {
             }
         });
         
-        
+        if(focusNode.getNodeDetails() != null){
+            list.getChildren().add(selection0);
+        }
         list.getChildren().add(selection1);
         list.getChildren().add(selection2);
         list.getChildren().add(selection3);
@@ -571,9 +771,12 @@ public class FXMLDocumentController implements Initializable {
             
         return newLine;
     }
+
     
     // Class node
     class Node {
+        
+        Vector<String> nodeDetails;
         
         int key;
         int x;
@@ -583,6 +786,8 @@ public class FXMLDocumentController implements Initializable {
         Label labelNode;
         Line line;
         Node parent;
+
+        
         boolean isParentLeft;
 
         public boolean getIsParentLeft() {
@@ -631,6 +836,14 @@ public class FXMLDocumentController implements Initializable {
             this.distance = distance;
         }
         
+        public Vector<String> getNodeDetails() {
+            return nodeDetails;
+        }
+
+        public void setNodeDetails(Vector<String> nodeDetails) {
+            this.nodeDetails = nodeDetails;
+        }
+        
         public void DrawLine(){
             this.line = addLine(this);
             pane_visual.getChildren().add(this.line);
@@ -639,6 +852,7 @@ public class FXMLDocumentController implements Initializable {
         public void AddNodeLabel(){
             this.labelNode = addNodeLabel(this.key, this);
             pane_visual.getChildren().add(labelNode);
+
         }
         
         public void setHightLight(){
