@@ -8,14 +8,22 @@ and open the template in the editor.
     Author     : KevinHa
 */
 .VisualPane{
-    -fx-background-color: #003333;
+    -fx-background-color: #3c3f41;
     
 }
 .Node{
-    -fx-background-color: #00cccc;
+    -fx-background-color: #bbbbbb;
     -fx-background-radius: 30;
-    -fx-border-color: #000000;
+    -fx-border-color: #ffffff;
     -fx-border-radius: 30;
+    -fx-font-size: 25; 
+}
+.Node_Path{
+    -fx-background-color: #ffff00;
+    -fx-background-radius: 30;
+    -fx-border-color: #ffffff;
+    -fx-border-radius: 30;
+    -fx-border-width: 3;
     -fx-font-size: 25; 
 }
 .Node_Hightline{
@@ -27,43 +35,63 @@ and open the template in the editor.
     -fx-font-size: 25; 
     
 }
+.Line{
+    -fx-stroke: #bbbbbb;
+    -fx-stroke-width: 1;
+    -fx-border-color: #bbbbbb;
+    
+}
+.separator{
+    -fx-background-color: #000000;
+    -fx-border-width: 0.1;
+}
 .Pane_Top{
-    -fx-background-color: #001d1d;
+    -fx-background-color: #3c3f41;
 }
 .Pane_Header{
-    -fx-text-fill: #00cccc;
+    -fx-background-color: #3c3f41;
+    -fx-text-fill: #bbbbbb;
+
+}
+.Pane_output_header{
+    -fx-background-color: #46494c;
+    -fx-border-color: #000000;
+    
+    
 }
 .text-field{
-    -fx-background-color: #003333;
+    -fx-background-color: #282b2d;
     -fx-background-radius: 40;
-    -fx-border-color: #00cccc;
+    -fx-border-color: #646464;
     -fx-border-radius: 40;
-    -fx-text-fill: #00cccc;
+    -fx-text-fill: #bbbbbb;
     
 }
 .Button{
-    -fx-background-color: #00cccc;
-    -fx-text-fill: #003333;
-    -fx-border-color: #004444;
+    -fx-background-color: #494b4f;
+    -fx-background-radius: 20;
+    -fx-text-fill: #bbbbbb;
+    -fx-border-color: #646464;
+    -fx-border-radius: 20;
+    -fx-border-width: 1;
     -fx-font-weight: bold;
     -fx-font-size: 16;
 }
 .Button:hover{
-    -fx-background-color: #00ffce;
+    -fx-background-color: #bbbbbb;
     -fx-text-fill: #003333;
     -fx-border-color: #004444;
     -fx-font-weight: bold;
     -fx-font-size: 16;
 }
 .Pane_Control{
-    -fx-border-color: #003333;
 
-    -fx-background-color: #004444;
+    -fx-background-color: #3c3f41;
 
     
 }
 .Pane_Output_Message{
-    -fx-background-color: #001d1d;
+    -fx-background-color: #2b2b2b;
 }
 @font-face{
     src: url('SourceCodePro-Light.ttf');
@@ -88,7 +116,7 @@ and open the template in the editor.
    -fx-background-color:transparent;
 }
 .scroll-pane > .viewport {  
-   -fx-background-color: #001d1d;
+   -fx-background-color: #2b2b2b;
 }
 .scroll-bar:horizontal, .scroll-bar:vertical{
     -fx-background-color: transparent;
@@ -102,7 +130,7 @@ and open the template in the editor.
 }
 .scroll-bar:horizontal .thumb,
 .scroll-bar:vertical .thumb{
-    -fx-background-color: #00cccc;
+    -fx-background-color: #bbbbbb;
     -fx-border-color: transparent;
     -fx-background-radius: 5em;
 }
@@ -119,6 +147,24 @@ and open the template in the editor.
    -fx-border-width: 0;
 }
 .scroll-pane-visual > .viewport {  
-   -fx-background-color: #003333;
+   -fx-background-color: #2b2b2b;
    -fx-border-width: 0;
+}
+.subMenu{
+    -fx-background-color: #bbbbbb;
+    -fx-background-radius: 5;
+    -fx-border-width: 1;
+    -fx-border-color: #000000;
+    -fx-border-radius: 5;
+
+}
+.subMenuButton{
+    -fx-font-size: 18;
+    -fx-background-radius: 5;
+    -fx-padding: 5;
+    -fx-text-fill: #000000;
+}
+.subMenuButton:hover{
+    -fx-background-color: #646464;
+    
 }
