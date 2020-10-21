@@ -10,20 +10,31 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.ResourceBundle;
+import java.util.Timer;
 import java.util.Vector;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -51,6 +62,19 @@ public class FXMLDocumentController implements Initializable {
     private VBox vbox_actionNotification;
     @FXML
     private ScrollPane scroll_view;
+    private CheckBox cbox_delLeft;
+    @FXML
+    private TextField txt_findKey;
+    @FXML
+    private TextField txt_deleteKey;
+    @FXML
+    private ToggleGroup deleteNode;
+    @FXML
+    private RadioButton chbx_deleteLeft;
+    @FXML
+    private RadioButton chbx_deleteRight;
+    @FXML
+    private ScrollPane scroll_output;
     
     
     @Override
@@ -62,6 +86,8 @@ public class FXMLDocumentController implements Initializable {
         pane_visual.prefWidthProperty().bind(scroll_view.widthProperty());
         pane_visual.prefHeightProperty().bind(scroll_view.heightProperty());
         
+        
+
         
     }  
     
@@ -76,26 +102,26 @@ public class FXMLDocumentController implements Initializable {
         addNode(Integer.parseInt(txt_key.getText()));
         NodeLabels.add(Integer.parseInt(txt_key.getText().toString()));
         txt_key.setText(null);
-        
-        System.out.println("Lis: " + NodeLabels);
         BuildVisualTree();
     }
     @FXML
     private void OnFindNodeClicked(MouseEvent event) {
-        if(txt_key.getText().length() == 0){
+        if(txt_findKey.getText().length() == 0){
             AddMessage("> Find Node - null", "red");
             return;
         }
-        boolean found = findNode(Integer.parseInt(txt_key.getText()), true);
+        boolean found = findNode(Integer.parseInt(txt_findKey.getText()), root, true, false);
         if(found == true){
-            AddMessage("> Node ["+txt_key.getText()+"] - Found", "");
+            AddMessage("> Node ["+txt_findKey.getText()+"] - Found", "");
         }else{
-            AddMessage("> Node ["+txt_key.getText()+"] - Not Found", "");
+            AddMessage("> Node ["+txt_findKey.getText()+"] - Not Found", "");
+            resetPreviousNodeStyle(root);
         }
+        
     }
     @FXML
     private void OnResetStyleNodeClicked(MouseEvent event) {
-        resetPreviousNodeStyle();
+        resetPreviousNodeStyle(root);
         previousKey = null;
         //TravesalTree(root);
         
@@ -109,7 +135,8 @@ public class FXMLDocumentController implements Initializable {
         }else{
             findLowestCommonAncester(Integer.parseInt(txt_lca1.getText()), Integer.parseInt(txt_lca2.getText()));
         }
-        txt_key.setText(null);
+        txt_lca1.setText(null);
+        txt_lca2.setText(null);
     }
     @FXML
     private void OnNewTreeClicked(MouseEvent event) {
@@ -124,8 +151,13 @@ public class FXMLDocumentController implements Initializable {
     }
     @FXML
     private void OnDeleteNodeClicked(MouseEvent event) {
-        deleteNode(Integer.parseInt(txt_key.getText()));
-        txt_key.setText(null);
+        if(txt_deleteKey.getText().length() == 0){
+            AddMessage("> Error - Cannot add empty node", "red");
+            return;
+        }
+        deleteNode(Integer.parseInt(txt_deleteKey.getText()));
+        txt_deleteKey.setText(null);
+        
     }
     
     void newTree(){
@@ -144,14 +176,19 @@ public class FXMLDocumentController implements Initializable {
         NodeLabels.clear();
         newTree();
         AddMessage("> Random Tree - Start generating new random binary tree", "green");
-        Random rand = new Random();
+        
+
         for(int i = 0; i < 15; i++){
+
+            Random rand = new Random();
             int newNode = rand.nextInt(50);
             NodeLabels.add(newNode);
             addNode(newNode);
+
         }
+            
         AddMessage("> " + NodeLabels, "green");
-        resetPreviousNodeStyle();
+        resetPreviousNodeStyle(root);
         AddMessage("> Random Tree - Finished generating new random binary tree", "green");
 
     }
@@ -173,16 +210,16 @@ public class FXMLDocumentController implements Initializable {
         for(int i = 0; i < NodeLabels.size(); i++){
             addNode(NodeLabels.get(i));
         }
-        resetPreviousNodeStyle();
+        resetPreviousNodeStyle(root);
     }
     
     // Add Node
     public void addNode(int key){
         
-        if(root != null && findNode(key, false) == true){
+        if(root != null && findNode(key, root, false, false) == true){
             return;
         }
-        resetPreviousNodeStyle();
+        resetPreviousNodeStyle(root);
 
         previousKey = key+"";
         Node newNode = new Node(key);
@@ -224,16 +261,19 @@ public class FXMLDocumentController implements Initializable {
 
     // Find Node
     String previousKey = null;
-    public boolean findNode(int key, boolean highlight){
+    public boolean findNode(int key, Node startNode, boolean highlight, boolean isLMA){
         String message = "";
         boolean result = true;
-        
-        resetPreviousNodeStyle();
-
-        Node focusNode = root;
+        if(isLMA == false){
+            resetPreviousNodeStyle(root);
+        }
+        Node focusNode = startNode;
         
         while(key != focusNode.key){
-            
+            if(highlight == true){
+                focusNode.setHightLightPath();
+                
+            }
             if(key < focusNode.key){
                 if(focusNode.leftChild != null){
                     focusNode = focusNode.leftChild;
@@ -252,6 +292,7 @@ public class FXMLDocumentController implements Initializable {
                     break;
                 }
             }
+            
         }
         if(focusNode != null){
             
@@ -320,73 +361,45 @@ public class FXMLDocumentController implements Initializable {
             NodeLabels.removeElement(key);
             System.out.println("Lis: " + NodeLabels);
             BuildVisualTree();
-            
-            //delNode.RemoveNodeLabel();
-            
-            //AddMessage("Parent Node: " + parent.key + " | Left: " + parent.leftChild.key  + " | Right: " + parent.rightChild.key , "green");
-        }
-        
-        //case 3: node with 2 childs
-//        else{
-//            Node MaxLeftNode = delNode;
-//            MaxLeftNode = MaxLeftNode.leftChild;
-//            while(MaxLeftNode.rightChild != null){
-//                MaxLeftNode = MaxLeftNode.rightChild;
-//            }
-//            System.out.println("Max Left Node: " + MaxLeftNode.key);
-//            MaxLeftNode.parent.rightChild = MaxLeftNode.leftChild;
-//            MaxLeftNode.leftChild = delNode.leftChild;
-//            MaxLeftNode.rightChild = delNode.rightChild;
-//            if(delNode.getIsParentLeft() == true){
-//                delNode.parent.rightChild = MaxLeftNode;
-//            }else{
-//                delNode.parent.leftChild = MaxLeftNode;
-//            }
-//            AddMessage("Delete Node: " + delNode.key + " is replaced by: " + MaxLeftNode.key  + " | Right: " + MaxLeftNode.rightChild.key   + " | Left: " + MaxLeftNode.leftChild.key + " | Parent: " + MaxLeftNode.parent.key, "green");
-//        }
-        else{
-            int DelKey = delNode.key;
-            Node MaxLeftNode = delNode;
-            MaxLeftNode = MaxLeftNode.leftChild;
-            while(MaxLeftNode.rightChild != null){
-                MaxLeftNode = MaxLeftNode.rightChild;
-                
-            }
 
-            //Collections.swap(NodeLabels, key, MaxLeftNode.key);
-            NodeLabels.removeElement(key);
-            System.out.println("Lis: " + NodeLabels);
+        }
+        // case 2: Node with 2 child.
+        else{
+
+            Node replacedNode = delNode;
+
+            if(chbx_deleteLeft.isSelected() == true){
+                replacedNode = replacedNode.leftChild;
+                while(replacedNode.rightChild != null){
+                    replacedNode = replacedNode.rightChild;
+                }
+            }
+            if(chbx_deleteRight.isSelected() == true){
+                replacedNode = replacedNode.rightChild;
+                while(replacedNode.leftChild != null){
+                    replacedNode = replacedNode.leftChild;
+                }
+            }
+            int tempNodeKey = NodeLabels.indexOf(key);
+            int tempNodeMaxKey = NodeLabels.indexOf(replacedNode.key);
+            System.out.println(tempNodeKey + " " + tempNodeMaxKey);
+            Collections.swap(NodeLabels, tempNodeKey, tempNodeMaxKey);
+            NodeLabels.removeElement(delNode.key);
             BuildVisualTree();
             
-            AddMessage("Delete Node: " + DelKey + " is replaced by: " + delNode.key  + " | Right: " + delNode.rightChild.key   + " | Left: " + delNode.leftChild.key + " | Parent: " + delNode.parent.key, "green");
+            AddMessage("> Node [" + key + "] has been deleted", "green");
         }
         
         
     }
     
     // Reset Node Style
-    public void resetPreviousNodeStyle(){
-        if(previousKey != null){
-            int key = Integer.parseInt(previousKey);
-            Node focusNode = root;
-
-            while(key != focusNode.key){
-
-                if(key < focusNode.key){
-                    focusNode = focusNode.leftChild;
-
-                }
-                else{
-                    focusNode = focusNode.rightChild;
-                }
-                if(focusNode == null){
-                    break;
-                }
-            }
-            if(focusNode != null){
-                focusNode.getLabelNode().getStyleClass().clear();
-                focusNode.getLabelNode().getStyleClass().add("Node");
-            }
+    public void resetPreviousNodeStyle(Node focusNode){
+        if(focusNode != null){
+            resetPreviousNodeStyle(focusNode.leftChild);
+            resetPreviousNodeStyle(focusNode.rightChild);
+            focusNode.getLabelNode().getStyleClass().clear();
+            focusNode.getLabelNode().getStyleClass().add("Node");
         }
         
     }
@@ -395,13 +408,16 @@ public class FXMLDocumentController implements Initializable {
     public void findLowestCommonAncester(int key1, int key2){
         Node focusNode = root;
         
-        if(findNode(key1, false) == false || findNode(key2, false) == false){
+        if(findNode(key1, root, false,false) == false || findNode(key2, root, false,false) == false){
             AddMessage("> Error: [" + key1 + "] and/or [" + key2 + "] is/are not existed in the tree.", "red");
             return;
         }else{
             while(true){
                 if((focusNode.key <= key1 && focusNode.key >= key2) || (focusNode.key >= key1 && focusNode.key <= key2)){
-                    findNode(focusNode.key, true);
+                    findNode(key1, focusNode, true,true);
+                    findNode(key2, focusNode, true,true);
+                    focusNode.setHightLight();
+                    
                     AddMessage("> Lowest common ancester of [" + key1 + "] and [" + key2 + "] is [" + focusNode.key+"]", "green");
                     return;
                 }else {
@@ -416,6 +432,7 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
+    // Add Message to message box
     public void AddMessage(String message, String color){
         Label l = new Label();
         l.setText(message);
@@ -436,6 +453,70 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
+    Pane submenu;
+    public void SubMenu(Node focusNode){
+
+        if(submenu != null){
+            pane_visual.getChildren().remove(submenu);
+        }
+
+        Pane menu = new Pane();
+        menu.setPrefWidth(200);
+        submenu = menu;
+        menu.setId("SubMenu");
+        menu.getStyleClass().add("subMenu");
+
+        VBox list = new VBox();
+        
+        Label selection1 = new Label("Find path from root");
+        selection1.getStyleClass().add("subMenuButton");
+        Label selection2 = new Label("Delete node");
+        selection2.getStyleClass().add("subMenuButton");
+        Label selection3 = new Label("Close");
+        selection3.getStyleClass().add("subMenuButton");
+        
+        selection1.prefWidthProperty().bind(menu.widthProperty());
+        selection2.prefWidthProperty().bind(menu.widthProperty());
+        selection3.prefWidthProperty().bind(menu.widthProperty());
+        
+        // Action Find Path
+        selection1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                resetPreviousNodeStyle(root);
+                findNode(focusNode.key, root, true, false);
+                pane_visual.getChildren().remove(submenu);
+            }
+        });
+        
+        // Action Delete Node
+        selection2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                deleteNode(focusNode.key);
+                txt_key.setText(null);
+            }
+        });
+        // Close Sub menu
+        selection3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                pane_visual.getChildren().remove(submenu);
+            }
+        });
+        
+        
+        list.getChildren().add(selection1);
+        list.getChildren().add(selection2);
+        list.getChildren().add(selection3);
+        
+        menu.getChildren().add(list);
+     
+        menu.setLayoutX(focusNode.getLabelNode().getLayoutX() + 50);
+        menu.setLayoutY(focusNode.getLabelNode().getLayoutY());
+        pane_visual.getChildren().add(menu);
+    }
+    // Add Label Node
     Label addNodeLabel(int newKey, Node newNode){
         Label newNodeLabel = new Label(newKey+"");
         newNodeLabel.setAlignment(Pos.CENTER);
@@ -452,7 +533,7 @@ public class FXMLDocumentController implements Initializable {
                 newNode.setX(newNode.parent.getX() + newNode.parent.getDistance()); 
             }
             newNode.setY(newNode.parent.getY() + 100);
-            newNode.setDistance(newNode.parent.getDistance()/2);
+            newNode.setDistance((int)newNode.parent.getDistance()/2);
             newNode.setLabelNode(newNodeLabel);
             newNodeLabel.setLayoutX(newNode.getX());
             newNodeLabel.setLayoutY(newNode.getY());
@@ -465,13 +546,22 @@ public class FXMLDocumentController implements Initializable {
             newNodeLabel.setLayoutY(newNode.getY());
 
         }
+        newNodeLabel.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                
+                SubMenu(newNode);
+            }
+        });
+        
         return newNodeLabel;
     }
     
+    // Add connect Line
     Line addLine(Node currentNode){
         
         Line newLine = new Line();
-        newLine.setStroke(Color.AQUA);
+        newLine.getStyleClass().add("Line");
         newLine.setStartX(currentNode.getX()+currentNode.getLabelNode().getPrefWidth()/2);
         
         newLine.setStartY(currentNode.getY());
@@ -482,6 +572,7 @@ public class FXMLDocumentController implements Initializable {
         return newLine;
     }
     
+    // Class node
     class Node {
         
         int key;
@@ -550,6 +641,11 @@ public class FXMLDocumentController implements Initializable {
             pane_visual.getChildren().add(labelNode);
         }
         
-
+        public void setHightLight(){
+                labelNode.getStyleClass().add("Node_Hightline");
+        }
+        public void setHightLightPath(){
+                labelNode.getStyleClass().add("Node_Path");
+        }
     }
 }
