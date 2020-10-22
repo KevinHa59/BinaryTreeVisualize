@@ -54,7 +54,7 @@ import javafx.util.Duration;
  */
 public class FXMLDocumentController implements Initializable {
     
-    Vector<Integer> NodeLabels;
+    Vector<Node> NodeLabels;
     @FXML
     private AnchorPane pane_root;
     @FXML
@@ -85,20 +85,19 @@ public class FXMLDocumentController implements Initializable {
     private ScrollPane scroll_output;
     
     Vector<String> NodeDetailTitle;
+    
+    Pane submenu;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
-        NodeLabels = new Vector<Integer>();
+        NodeLabels = new Vector<Node>();
         
         pane_visual.prefWidthProperty().bind(scroll_view.widthProperty());
         pane_visual.prefHeightProperty().bind(scroll_view.heightProperty());
         
-        
-
-        
     }  
-    
-    
+
     @FXML
     private void OnAddNodeClicked(MouseEvent event) {
         if(txt_key.getText().length() == 0){
@@ -107,16 +106,19 @@ public class FXMLDocumentController implements Initializable {
         }
         if(NodeDetailTitle == null){
             AddMessage("> Add Node - " + txt_key.getText(), "");
-            addNode(Integer.parseInt(txt_key.getText()));
-            NodeLabels.add(Integer.parseInt(txt_key.getText().toString()));
+            Node newNode = addNode(Integer.parseInt(txt_key.getText()));
+            NodeLabels.add(newNode);
             txt_key.setText("");
             BuildVisualTree();
-        }else{
-
-            addNode(Integer.parseInt(txt_key.getText()), NodeDetailTitle);
             
+        }else{
+            AddMessage("> Add Node - " + txt_key.getText(), "");
+            addNode(Integer.parseInt(txt_key.getText()), NodeDetailTitle, false);
+
         }
+        
     }
+    
     @FXML
     private void OnFindNodeClicked(MouseEvent event) {
         if(txt_findKey.getText().length() == 0){
@@ -132,6 +134,7 @@ public class FXMLDocumentController implements Initializable {
         }
         
     }
+    
     @FXML
     private void OnResetStyleNodeClicked(MouseEvent event) {
         resetPreviousNodeStyle(root);
@@ -139,6 +142,7 @@ public class FXMLDocumentController implements Initializable {
         //TravesalTree(root);
         
     }
+    
     @FXML
     private void OnFindLCANodeClicked(MouseEvent event) {
 
@@ -151,17 +155,20 @@ public class FXMLDocumentController implements Initializable {
         txt_lca1.setText(null);
         txt_lca2.setText(null);
     }
+    
     @FXML
     private void OnNewTreeClicked(MouseEvent event) {
         AddMessage("> New Tree - Deleted Old Binary Tree", "");
         NodeLabels.clear();
         newTree();
     }
+    
     @FXML
     private void OnRandomTreeClicked(MouseEvent event) {
         randomTree();
         //BuildVisualTree();
     }
+    
     @FXML
     private void OnDeleteNodeClicked(MouseEvent event) {
         if(txt_deleteKey.getText().length() == 0){
@@ -177,6 +184,7 @@ public class FXMLDocumentController implements Initializable {
     private void OnCustomNodeClicked(MouseEvent event) {
         customNodeDetail();
     }
+    
     void newTree(){
         
         if(root == null){
@@ -198,9 +206,11 @@ public class FXMLDocumentController implements Initializable {
         for(int i = 0; i < 15; i++){
 
             Random rand = new Random();
-            int newNode = rand.nextInt(50);
-            NodeLabels.add(newNode);
-            addNode(newNode);
+            int newKey = rand.nextInt(50);
+            Node n = new Node(newKey);
+            
+            NodeLabels.add(n);
+            addNode(newKey);
 
         }
             
@@ -225,9 +235,14 @@ public class FXMLDocumentController implements Initializable {
                 
         newTree();
         for(int i = 0; i < NodeLabels.size(); i++){
-            addNode(NodeLabels.get(i));
+            if(NodeDetailTitle != null){
+                
+                addNode(NodeLabels.get(i).key, NodeDetailTitle, true);
+            }else{
+                addNode(NodeLabels.get(i).key);
+            }
         }
-        resetPreviousNodeStyle(root);
+        
     }
     // Custom Node Detail
     public void customNodeDetail(){
@@ -306,11 +321,11 @@ public class FXMLDocumentController implements Initializable {
     }
 
     // Add Node
-    public void addNode(int key){
-        
+    public Node addNode(int key){
+        Node newN = null;
         if(root != null && findNode(key, root, false, false) == true){
-            return;
-        }
+            return newN;
+        }else{
         resetPreviousNodeStyle(root);
 
         previousKey = key+"";
@@ -346,17 +361,21 @@ public class FXMLDocumentController implements Initializable {
             
         }
         
-        newNode.AddNodeLabel();
-        if(root.key != key){
-            newNode.DrawLine();
+            newNode.AddNodeLabel();
+            if(root.key != key){
+                newNode.DrawLine();
+            }
+            newN = newNode;
         }
+        return newN;
     }
     
     // Add Node Custom
-    public void addNode(int key, Vector<String> detail){
+    public Node addNode(int key, Vector<String> detail, boolean rebuild){
+        Node newN = null;
         if(root != null && findNode(key, root, false, false) == true){
-            return;
-        }
+            return newN;
+        }else{
         resetPreviousNodeStyle(root);
 
         previousKey = key+"";
@@ -392,7 +411,18 @@ public class FXMLDocumentController implements Initializable {
             
         }
         
-        addNodeCustomPane(detail, newNode);
+        if(rebuild == false){
+            addNodeCustomPane(detail, newNode);
+        }else{
+            //newNode.setNodeDetails();
+            newNode.AddNodeLabel();
+            if(root.key != key){
+                newNode.DrawLine();
+            }
+        }
+            newN = newNode;
+        }
+        return newN;
     }
     
     // Node Custom Pane
@@ -422,10 +452,11 @@ public class FXMLDocumentController implements Initializable {
             detailItemContainer.getChildren().add(txt_detail);
             list.getChildren().add(detailItemContainer);
             detail.add(txt_detail);
+            
+            if(newNode.getNodeDetails()!=null){
+                
+            }
         }
-        
-        
-        
         
         Button addDetail = new Button("Add");
         addDetail.getStyleClass().add("Button");
@@ -435,23 +466,29 @@ public class FXMLDocumentController implements Initializable {
             public void handle(MouseEvent event) {
                 for(int i = 0; i < detail.size();i++){
                     detailText.add(i, detail.get(i).getText());
-                    System.out.println("" + detailText.get(i));
                 }
+                
                 newNode.setNodeDetails(detailText);
+                
                 newNode.AddNodeLabel();
+                
                 if(root.key != newNode.key){
                     newNode.DrawLine();
                 }
+                NodeLabels.add(newNode);
+                txt_key.setText("");
                 pane_visual.getChildren().remove(container);
+
             }
         });
         
         br.setTop(header);
         br.setCenter(list);
         br.setBottom(addDetail);
-        txt_key.setText("");
+        
         container.getChildren().add(br);
         pane_visual.getChildren().add(container);
+        
     }
     // Find Node
     String previousKey = null;
@@ -504,6 +541,7 @@ public class FXMLDocumentController implements Initializable {
     public void deleteNode(int key){
         Node delNode = root;
         Node parent = root;
+        
         // Find delete node & parent of delete Node
         
         while(key != delNode.key){
@@ -525,8 +563,10 @@ public class FXMLDocumentController implements Initializable {
             }else{
                 parent.rightChild = null;
             }
-            NodeLabels.removeElement(key);
-            System.out.println("Lis: " + NodeLabels);
+            int dkey = delNode.key;
+            NodeLabels.removeIf(n -> (n.key == dkey));
+            //NodeLabels.removeElement(delNode.key == delNode.key);
+            
             BuildVisualTree();
             AddMessage("> Node [" + key + "] has been deleted", "green");
         }
@@ -552,7 +592,8 @@ public class FXMLDocumentController implements Initializable {
                 delNode.leftChild = null;
                 AddMessage("> Node [" + key + "] has been deleted." , "green");
             }
-            NodeLabels.removeElement(key);
+            int dkey = delNode.key;
+            NodeLabels.removeIf(n -> (n.key == dkey));
             System.out.println("Lis: " + NodeLabels);
             BuildVisualTree();
 
@@ -574,11 +615,21 @@ public class FXMLDocumentController implements Initializable {
                     replacedNode = replacedNode.leftChild;
                 }
             }
-            int tempNodeKey = NodeLabels.indexOf(key);
-            int tempNodeMaxKey = NodeLabels.indexOf(replacedNode.key);
+            int tempNodeKey = -1;
+            int tempNodeMaxKey = -1;
+            for(int i = 0; i < NodeLabels.size();i++){
+                if(NodeLabels.get(i).key == delNode.key){
+                    tempNodeKey = i;
+                }
+                if(NodeLabels.get(i).key == replacedNode.key){
+                    tempNodeMaxKey = i;
+                }
+            }
+
             System.out.println(tempNodeKey + " " + tempNodeMaxKey);
             Collections.swap(NodeLabels, tempNodeKey, tempNodeMaxKey);
-            NodeLabels.removeElement(delNode.key);
+            int dkey = delNode.key;
+            NodeLabels.removeIf(n -> (n.key == dkey));
             BuildVisualTree();
             
             AddMessage("> Node [" + key + "] has been deleted", "green");
@@ -647,77 +698,9 @@ public class FXMLDocumentController implements Initializable {
         
     }
 
-    Pane submenu;
-    public void SubMenu(Node focusNode){
-
-        if(submenu != null){
-            pane_visual.getChildren().remove(submenu);
-        }
-
-        Pane menu = new Pane();
-        menu.setPrefWidth(200);
-        submenu = menu;
-        menu.setId("SubMenu");
-        menu.getStyleClass().add("subMenu");
-
-        VBox list = new VBox();
-        
-        Label selection0 = new Label("Node Detail");
-        selection0.getStyleClass().add("subMenuButton");
-        Label selection1 = new Label("Find path from root");
-        selection1.getStyleClass().add("subMenuButton");
-        Label selection2 = new Label("Delete node");
-        selection2.getStyleClass().add("subMenuButton");
-        Label selection3 = new Label("Close");
-        selection3.getStyleClass().add("subMenuButton");
-        
-        
-        selection0.prefWidthProperty().bind(menu.widthProperty());
-        selection1.prefWidthProperty().bind(menu.widthProperty());
-        selection2.prefWidthProperty().bind(menu.widthProperty());
-        selection3.prefWidthProperty().bind(menu.widthProperty());
-        
-        // Action Find Path
-        selection1.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                resetPreviousNodeStyle(root);
-                findNode(focusNode.key, root, true, false);
-                pane_visual.getChildren().remove(submenu);
-            }
-        });
-        
-        // Action Delete Node
-        selection2.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                deleteNode(focusNode.key);
-                txt_key.setText("");
-            }
-        });
-        // Close Sub menu
-        selection3.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent event) {
-                pane_visual.getChildren().remove(submenu);
-            }
-        });
-        
-        if(focusNode.getNodeDetails() != null){
-            list.getChildren().add(selection0);
-        }
-        list.getChildren().add(selection1);
-        list.getChildren().add(selection2);
-        list.getChildren().add(selection3);
-        
-        menu.getChildren().add(list);
-     
-        menu.setLayoutX(focusNode.getLabelNode().getLayoutX() + 50);
-        menu.setLayoutY(focusNode.getLabelNode().getLayoutY());
-        pane_visual.getChildren().add(menu);
-    }
     // Add Label Node
     Label addNodeLabel(int newKey, Node newNode){
+        System.out.println("Detail more " + newNode.getNodeDetails());
         Label newNodeLabel = new Label(newKey+"");
         newNodeLabel.setAlignment(Pos.CENTER);
         newNodeLabel.setId(newKey+"");
@@ -750,7 +733,8 @@ public class FXMLDocumentController implements Initializable {
             @Override
             public void handle(MouseEvent event) {
                 
-                SubMenu(newNode);
+                newNode.showSubMenu(); 
+                //SubMenu(newNode);
             }
         });
         
@@ -842,6 +826,7 @@ public class FXMLDocumentController implements Initializable {
 
         public void setNodeDetails(Vector<String> nodeDetails) {
             this.nodeDetails = nodeDetails;
+            
         }
         
         public void DrawLine(){
@@ -854,12 +839,138 @@ public class FXMLDocumentController implements Initializable {
             pane_visual.getChildren().add(labelNode);
 
         }
-        
         public void setHightLight(){
                 labelNode.getStyleClass().add("Node_Hightline");
         }
         public void setHightLightPath(){
                 labelNode.getStyleClass().add("Node_Path");
+        }
+        
+        public void showSubMenu(){
+            System.out.println("Node Detail: " + this.nodeDetails);
+            if(submenu != null){
+                pane_visual.getChildren().remove(submenu);
+            }
+
+            Pane menu = new Pane();
+            menu.setPrefWidth(200);
+            submenu = menu;
+            menu.setId("SubMenu");
+            menu.getStyleClass().add("subMenu");
+
+            VBox list = new VBox();
+
+            Label selection0 = new Label("Node Detail");
+            selection0.getStyleClass().add("subMenuButton");
+            Label selection1 = new Label("Find path from root");
+            selection1.getStyleClass().add("subMenuButton");
+            Label selection2 = new Label("Delete node");
+            selection2.getStyleClass().add("subMenuButton");
+            Label selection3 = new Label("Close");
+            selection3.getStyleClass().add("subMenuButton");
+
+
+            selection0.prefWidthProperty().bind(menu.widthProperty());
+            selection1.prefWidthProperty().bind(menu.widthProperty());
+            selection2.prefWidthProperty().bind(menu.widthProperty());
+            selection3.prefWidthProperty().bind(menu.widthProperty());
+
+            // Show Detail
+            selection0.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    pane_visual.getChildren().remove(submenu);
+                    showNodeInfo();
+                }
+            });
+            
+            // Action Find Path
+            selection1.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    resetPreviousNodeStyle(root);
+                    findNode(key, root, true, false);
+                    pane_visual.getChildren().remove(submenu);
+                }
+            });
+
+            // Action Delete Node
+            selection2.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    deleteNode(key);
+                    txt_key.setText("");
+                }
+            });
+            // Close Sub menu
+            selection3.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    pane_visual.getChildren().remove(submenu);
+                }
+            });
+
+            if(nodeDetails != null){
+                list.getChildren().add(selection0);
+            }
+            list.getChildren().add(selection1);
+            list.getChildren().add(selection2);
+            list.getChildren().add(selection3);
+
+            menu.getChildren().add(list);
+
+            menu.setLayoutX(getLabelNode().getLayoutX() + 50);
+            menu.setLayoutY(getLabelNode().getLayoutY());
+            pane_visual.getChildren().add(menu);
+        }
+        
+        public void showNodeInfo(){
+            if(submenu != null){
+                pane_visual.getChildren().remove(submenu);
+            }
+
+            Pane menu = new Pane();
+            menu.setPrefWidth(200);
+            submenu = menu;
+            menu.setId("SubMenu");
+            menu.getStyleClass().add("subMenu");
+
+            VBox list = new VBox();
+
+            Label selection0 = new Label("Close");
+            selection0.getStyleClass().add("subMenuButton");
+
+            selection0.prefWidthProperty().bind(menu.widthProperty());
+
+            // Close Sub menu
+            selection0.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent event) {
+                    pane_visual.getChildren().remove(submenu);
+                }
+            });
+            
+            for(int i = 0; i < NodeDetailTitle.size();i++){
+                HBox b = new HBox();
+                Label field = new Label(NodeDetailTitle.get(i));
+                field.getStyleClass().add("NodeDetail");
+                Label fieldDetail = new Label(nodeDetails.get(i));
+                fieldDetail.getStyleClass().add("NodeDetail");
+                b.getChildren().add(field);
+                b.getChildren().add(fieldDetail);
+                list.getChildren().add(b);
+            }
+            
+            if(getNodeDetails() != null){
+                list.getChildren().add(selection0);
+            }
+
+
+            menu.getChildren().add(list);
+
+            menu.setLayoutX(getLabelNode().getLayoutX() + 50);
+            menu.setLayoutY(getLabelNode().getLayoutY());
+            pane_visual.getChildren().add(menu);
         }
     }
 }
