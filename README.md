@@ -9,5 +9,6 @@ Functions:
 6. Delete Node with 0 child
 7. Delete Node with 1 child
 8. Delete Node with 2 child
+9. Custom Node - add details to node. (Need more work)
 
 More functions are creating.
