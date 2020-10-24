@@ -27,12 +27,22 @@ and open the template in the editor.
     -fx-font-size: 25; 
 }
 .Node_Hightline{
-    -fx-background-color: #ffff00;
+    -fx-background-color: #009933;
     -fx-background-radius: 30;
-    -fx-border-color: #ff0033;
+    -fx-border-color: #00ffcc;
     -fx-border-radius: 30;
     -fx-border-width: 3;
     -fx-font-size: 25; 
+    
+}
+.NodeDetail{
+    -fx-font-size: 18;
+    -fx-padding: 3 5 0 10;
+}
+.NodeDetailLabel{
+    -fx-font-size: 18;
+    -fx-font-weight: bold;
+    -fx-padding: 3 5 0 0;
     
 }
 .Line{
@@ -187,9 +197,20 @@ and open the template in the editor.
     -fx-font-size: 18;
     -fx-background-radius: 5;
     -fx-padding: 5;
+    -fx-border-width: 0;
     -fx-text-fill: #000000;
 }
 .subMenuButton:hover{
     -fx-background-color: #646464;
+    -fx-border-width: 0;
+}
+.imageButton{
+    -fx-background-color: #368787;
+    -fx-border-color: #cc0000;
+    -fx-padding: 5;
+    
+}
+.imageButton:hover{
+    -fx-background-color: #368787;
     
 }

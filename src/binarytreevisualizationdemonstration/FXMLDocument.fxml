@@ -8,9 +8,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.effect.InnerShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -62,6 +65,11 @@
                                     <Font size="16.0" />
                                  </font>
                               </Label>
+                              <ImageView fx:id="img_customNode" fitHeight="30.0" fitWidth="27.0" layoutX="149.0" layoutY="1.0" onMouseClicked="#OnCustomNodeClicked" pickOnBounds="true" preserveRatio="true" styleClass="imageButton">
+                                 <image>
+                                    <Image url="@icons8_settings_50px.png" />
+                                 </image>
+                              </ImageView>
                            </children>
                         </AnchorPane>
                         <Separator opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
@@ -138,12 +146,7 @@
                         <Separator layoutX="628.0" layoutY="10.0" opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
                         <AnchorPane styleClass="Pane_Control">
                            <children>
-                              <Label alignment="CENTER" layoutX="2.0" layoutY="98.0" onMouseClicked="#OnResetStyleNodeClicked" prefHeight="33.0" prefWidth="156.0" styleClass="Button" text="Reset Highlight" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="45.0">
-                                 <font>
-                                    <Font size="16.0" />
-                                 </font>
-                              </Label>
-                              <Label alignment="CENTER" layoutX="8.0" layoutY="14.0" onMouseClicked="#OnCustomNodeClicked" prefHeight="33.0" prefWidth="156.0" styleClass="Button" text="Custom Node" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="14.0" onMouseClicked="#OnResetStyleNodeClicked" prefHeight="33.0" prefWidth="156.0" styleClass="Button" text="Reset Highlight" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="14.0">
                                  <font>
                                     <Font size="16.0" />
                                  </font>
@@ -157,9 +160,9 @@
             </AnchorPane>
          </top>
          <center>
-            <ScrollPane fx:id="scroll_view" hbarPolicy="NEVER" pannable="true" style="-fx-background-color: transparent;" styleClass="scroll-pane-visual" BorderPane.alignment="CENTER">
+            <ScrollPane fx:id="scroll_view" pannable="true" style="-fx-background-color: transparent;" styleClass="scroll-pane-visual" BorderPane.alignment="CENTER">
                <content>
-                  <AnchorPane fx:id="pane_visual" prefHeight="200.0" prefWidth="200.0" />
+                  <Pane fx:id="pane_visual" />
                </content>
                <effect>
                   <InnerShadow color="#00000050" />

@@ -30,14 +30,17 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Orientation;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.Separator;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -58,7 +61,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private AnchorPane pane_root;
     @FXML
-    private AnchorPane pane_visual;
+    private Pane pane_visual;
     @FXML
     private TextField txt_key;
     
@@ -87,12 +90,14 @@ public class FXMLDocumentController implements Initializable {
     Vector<String> NodeDetailTitle;
     
     Pane submenu;
+    @FXML
+    private ImageView img_customNode;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         NodeLabels = new Vector<Node>();
-        
+        img_customNode.getStyleClass().add("imageButton");
         pane_visual.prefWidthProperty().bind(scroll_view.widthProperty());
         pane_visual.prefHeightProperty().bind(scroll_view.heightProperty());
         
@@ -138,7 +143,7 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private void OnResetStyleNodeClicked(MouseEvent event) {
         resetPreviousNodeStyle(root);
-        previousKey = null;
+        //previousKey = null;
         //TravesalTree(root);
         
     }
@@ -193,7 +198,7 @@ public class FXMLDocumentController implements Initializable {
         }
         root = null;
         pane_visual.getChildren().clear();
-        previousKey = null;
+        //previousKey = null;
         
     }
     
@@ -202,19 +207,19 @@ public class FXMLDocumentController implements Initializable {
         newTree();
         AddMessage("> Random Tree - Start generating new random binary tree", "green");
         
-
+        String RandomNodeList = "Random Node: ";
         for(int i = 0; i < 15; i++){
-
+            
             Random rand = new Random();
             int newKey = rand.nextInt(50);
             Node n = new Node(newKey);
-            
+            RandomNodeList += newKey + ", ";
             NodeLabels.add(n);
             addNode(newKey);
 
         }
             
-        AddMessage("> " + NodeLabels, "green");
+        AddMessage("> " + RandomNodeList, "green");
         resetPreviousNodeStyle(root);
         AddMessage("> Random Tree - Finished generating new random binary tree", "green");
 
@@ -237,7 +242,8 @@ public class FXMLDocumentController implements Initializable {
         for(int i = 0; i < NodeLabels.size(); i++){
             if(NodeDetailTitle != null){
                 
-                addNode(NodeLabels.get(i).key, NodeDetailTitle, true);
+                addNode(NodeLabels.get(i), NodeDetailTitle, true);
+
             }else{
                 addNode(NodeLabels.get(i).key);
             }
@@ -261,18 +267,51 @@ public class FXMLDocumentController implements Initializable {
         title.getStyleClass().add("customNodeHeader");
         
         HBox bottomContainer =new HBox();
-        
-        Button addDetail = new Button("Add");
+        bottomContainer.setAlignment(Pos.CENTER);
+        bottomContainer.setPadding(new Insets(3));
+        Button addDetail = new Button("Add Field");
         Button apply = new Button("Apply");
         addDetail.getStyleClass().add("Button");
         apply.getStyleClass().add("Button");
         bottomContainer.getChildren().add(addDetail);
         bottomContainer.getChildren().add(apply);
         
+        
+        if(NodeDetailTitle != null){
+            
+            for(int i = 0 ; i < NodeDetailTitle.size(); i++){
+                
+                HBox detailContainer =  new HBox();
+                detailContainer.setAlignment(Pos.CENTER_RIGHT);
+                TextField txt_detail = new TextField();
+                txt_detail.setText(NodeDetailTitle.get(i));
+                txt_detail.getStyleClass().add("customNodeTextfield");
+                Button btn_deleteDetail = new Button();
+                btn_deleteDetail.getStyleClass().add("Button");
+                txt_detail.setPrefWidth(200);
+                btn_deleteDetail.setText("X");
+                
+                btn_deleteDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                    @Override
+                    public void handle(MouseEvent event) {
+                        list.getChildren().remove(detailContainer);
+                        v.remove(txt_detail);
+                    }
+                });
+                
+                detailContainer.getChildren().add(txt_detail);
+                detailContainer.getChildren().add(btn_deleteDetail);
+                v.add(txt_detail);
+                
+                list.getChildren().add(detailContainer);
+            }
+        }
+        
         addDetail.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 HBox detailContainer =  new HBox();
+                detailContainer.setAlignment(Pos.CENTER_RIGHT);
                 TextField txt_detail = new TextField();
                 txt_detail.getStyleClass().add("customNodeTextfield");
                 Button btn_deleteDetail = new Button();
@@ -304,9 +343,7 @@ public class FXMLDocumentController implements Initializable {
                     System.out.println("Text " + v.get(i).getText());
                     NodeDetailTitle.add(v.get(i).getText());
                 }
-                System.out.println("v size " + v.size());
                 if(v.size() == 0){
-                    System.out.println("v size " + v);
                     NodeDetailTitle = null;
                 }
                 pane_visual.getChildren().remove(container);
@@ -328,7 +365,7 @@ public class FXMLDocumentController implements Initializable {
         }else{
         resetPreviousNodeStyle(root);
 
-        previousKey = key+"";
+        //previousKey = key+"";
         Node newNode = new Node(key);
         if(root == null){
             root = newNode;
@@ -378,7 +415,7 @@ public class FXMLDocumentController implements Initializable {
         }else{
         resetPreviousNodeStyle(root);
 
-        previousKey = key+"";
+        //previousKey = key+"";
         Node newNode = new Node(key);
         if(root == null){
             root = newNode;
@@ -425,6 +462,64 @@ public class FXMLDocumentController implements Initializable {
         return newN;
     }
     
+    // Rebuild Node Custom
+    public Node addNode(Node keyNode, Vector<String> detail, boolean rebuild){
+        Node newN = null;
+        if(root != null && findNode(keyNode.key, root, false, false) == true){
+            return newN;
+        }else{
+        resetPreviousNodeStyle(root);
+
+        //previousKey = keyNode.key+"";
+        Node newNode = new Node(keyNode.key);
+        if(root == null){
+            root = newNode;
+            newNode.setNodeDetails(keyNode.getNodeDetails());
+            
+        }else{
+            Node parent;
+            Node focusNode = root;
+            boolean cont = true;
+            while(cont == true){
+                parent = focusNode;
+                if(keyNode.key < focusNode.key){
+                    focusNode = focusNode.leftChild;
+                    if(focusNode == null){
+                        newNode.parent = parent;
+                        parent.leftChild = newNode;
+                        newNode.setIsParentLeft(false);
+                        newNode.setNodeDetails(keyNode.getNodeDetails());
+                        cont = false;
+                    }
+                }else{
+                    focusNode = focusNode.rightChild;
+                    if(focusNode == null){
+                        newNode.parent = parent;
+                        parent.rightChild = newNode;
+                        newNode.setIsParentLeft(true);
+                        newNode.setNodeDetails(keyNode.getNodeDetails());
+                        cont = false;
+                    }
+                }
+                
+            }
+            
+        }
+        
+        if(rebuild == false){
+            addNodeCustomPane(detail, newNode);
+        }else{
+            //newNode.setNodeDetails();
+            newNode.AddNodeLabel();
+            if(root.key != keyNode.key){
+                newNode.DrawLine();
+            }
+        }
+            newN = newNode;
+        }
+        return newN;
+    }
+    
     // Node Custom Pane
     public void addNodeCustomPane(Vector<String> titleList, Node newNode){
         Vector<TextField> detail = new Vector<TextField>();
@@ -443,6 +538,7 @@ public class FXMLDocumentController implements Initializable {
 
         for(int i =0; i < titleList.size(); i++){
             HBox detailItemContainer =new HBox();
+            detailItemContainer.setAlignment(Pos.CENTER_RIGHT);
             Label title = new Label();
             title.setText(titleList.get(i).toString());
             title.getStyleClass().add("customNodeHeader");
@@ -491,9 +587,8 @@ public class FXMLDocumentController implements Initializable {
         
     }
     // Find Node
-    String previousKey = null;
+    //String previousKey = null;
     public boolean findNode(int key, Node startNode, boolean highlight, boolean isLMA){
-        String message = "";
         boolean result = true;
         if(isLMA == false){
             resetPreviousNodeStyle(root);
@@ -530,7 +625,7 @@ public class FXMLDocumentController implements Initializable {
             if(highlight == true){
                 focusNode.getLabelNode().getStyleClass().add("Node_Hightline");
             }
-            previousKey = key+"";   
+            //previousKey = key+"";   
             result = true;
         }
         
@@ -594,7 +689,6 @@ public class FXMLDocumentController implements Initializable {
             }
             int dkey = delNode.key;
             NodeLabels.removeIf(n -> (n.key == dkey));
-            System.out.println("Lis: " + NodeLabels);
             BuildVisualTree();
 
         }
@@ -625,8 +719,6 @@ public class FXMLDocumentController implements Initializable {
                     tempNodeMaxKey = i;
                 }
             }
-
-            System.out.println(tempNodeKey + " " + tempNodeMaxKey);
             Collections.swap(NodeLabels, tempNodeKey, tempNodeMaxKey);
             int dkey = delNode.key;
             NodeLabels.removeIf(n -> (n.key == dkey));
@@ -700,7 +792,6 @@ public class FXMLDocumentController implements Initializable {
 
     // Add Label Node
     Label addNodeLabel(int newKey, Node newNode){
-        System.out.println("Detail more " + newNode.getNodeDetails());
         Label newNodeLabel = new Label(newKey+"");
         newNodeLabel.setAlignment(Pos.CENTER);
         newNodeLabel.setId(newKey+"");
@@ -847,7 +938,6 @@ public class FXMLDocumentController implements Initializable {
         }
         
         public void showSubMenu(){
-            System.out.println("Node Detail: " + this.nodeDetails);
             if(submenu != null){
                 pane_visual.getChildren().remove(submenu);
             }
@@ -930,7 +1020,8 @@ public class FXMLDocumentController implements Initializable {
             }
 
             Pane menu = new Pane();
-            menu.setPrefWidth(200);
+            menu.setMinWidth(200);
+            //menu.setPrefWidth(200);
             submenu = menu;
             menu.setId("SubMenu");
             menu.getStyleClass().add("subMenu");
@@ -952,16 +1043,18 @@ public class FXMLDocumentController implements Initializable {
             
             for(int i = 0; i < NodeDetailTitle.size();i++){
                 HBox b = new HBox();
-                Label field = new Label(NodeDetailTitle.get(i));
+                Label field = new Label(NodeDetailTitle.get(i) + ": ");
                 field.getStyleClass().add("NodeDetail");
                 Label fieldDetail = new Label(nodeDetails.get(i));
-                fieldDetail.getStyleClass().add("NodeDetail");
+                fieldDetail.getStyleClass().add("NodeDetailLabel");
                 b.getChildren().add(field);
                 b.getChildren().add(fieldDetail);
                 list.getChildren().add(b);
             }
             
             if(getNodeDetails() != null){
+                Separator line = new Separator(Orientation.HORIZONTAL);
+                list.getChildren().add(line);
                 list.getChildren().add(selection0);
             }
 
