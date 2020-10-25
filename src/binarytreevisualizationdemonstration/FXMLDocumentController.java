@@ -58,6 +58,8 @@ import javafx.util.Duration;
 public class FXMLDocumentController implements Initializable {
     
     Vector<Node> NodeLabels;
+    Vector<Integer> travesalTreeList;
+    
     @FXML
     private AnchorPane pane_root;
     @FXML
@@ -92,14 +94,23 @@ public class FXMLDocumentController implements Initializable {
     Pane submenu;
     @FXML
     private ImageView img_customNode;
+    @FXML
+    private ToggleGroup Travesal;
+    @FXML
+    private RadioButton cbox_inorder;
+    @FXML
+    private RadioButton cbox_preorder;
+    @FXML
+    private RadioButton cbox_postorder;
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO
         NodeLabels = new Vector<Node>();
+        
         img_customNode.getStyleClass().add("imageButton");
         pane_visual.prefWidthProperty().bind(scroll_view.widthProperty());
-        pane_visual.prefHeightProperty().bind(scroll_view.heightProperty());
+        
         
     }  
 
@@ -190,6 +201,24 @@ public class FXMLDocumentController implements Initializable {
         customNodeDetail();
     }
     
+    @FXML
+    private void OnShowTravesalTreeClicked(MouseEvent event) {
+        if(root == null){
+            AddMessage("> Show Travesal Tree - null", "green");
+            return;
+        }
+        if(cbox_inorder.isSelected()){
+            AddMessage("> Show In-order Travesal Tree - null", "green");
+            ShowTravesalTreeList(1);
+        }else if(cbox_preorder.isSelected()){
+            AddMessage("> Show Pre-order Travesal Tree - null", "green");
+            ShowTravesalTreeList(2);
+        }else if(cbox_postorder.isSelected()){
+            AddMessage("> Show Post-order Travesal Tree - null", "green");
+            ShowTravesalTreeList(3);
+        }
+    }
+    
     void newTree(){
         
         if(root == null){
@@ -224,16 +253,100 @@ public class FXMLDocumentController implements Initializable {
         AddMessage("> Random Tree - Finished generating new random binary tree", "green");
 
     }
-       
-    void TravesalTree(Node focusNode){
+    
+    // Travesal Tree
+    
+    void inOrderTravesalTree(Node focusNode){
         
         if(focusNode != null){
-            TravesalTree(focusNode.leftChild);
             
-            focusNode.getLabelNode().getStyleClass().add("Node");
+            inOrderTravesalTree(focusNode.leftChild);
             
-            TravesalTree(focusNode.rightChild);
+            travesalTreeList.add(focusNode.key);
+            
+            inOrderTravesalTree(focusNode.rightChild);
         }
+    }
+    
+    void preOrderTravesalTree(Node focusNode){
+        
+        if(focusNode != null){
+            
+            travesalTreeList.add(focusNode.key);
+            
+            inOrderTravesalTree(focusNode.leftChild);
+            
+            inOrderTravesalTree(focusNode.rightChild);
+        }
+    }
+    
+    void postOrderTravesalTree(Node focusNode){
+        
+        if(focusNode != null){
+                        
+            inOrderTravesalTree(focusNode.leftChild);
+            
+            inOrderTravesalTree(focusNode.rightChild);
+            
+            travesalTreeList.add(focusNode.key);
+        }
+    }
+    
+    // Show Travesal Tree
+    Pane TravesalPane;
+    void ShowTravesalTreeList(int type){
+        travesalTreeList = new Vector<>();
+        String Listtype = "";
+        switch (type){
+            case 1:
+                Listtype = "In-Order Travesal Tree";
+                inOrderTravesalTree(root);
+                break;
+            case 2:
+                Listtype = "Pre-Order Travesal Tree";
+                preOrderTravesalTree(root);
+                break;
+            case 3:
+                Listtype = "Post-Order Travesal Tree";
+                postOrderTravesalTree(root);
+                break;
+        }
+        if(TravesalPane != null){
+            pane_visual.getChildren().remove(TravesalPane);
+        }
+        Pane pane = new Pane();
+        TravesalPane = pane;
+        pane.setLayoutX(10);
+        pane.setLayoutY(10);
+        pane.getStyleClass().add("subMenu");
+        VBox v = new VBox();
+        v.setSpacing(3);
+        String list = travesalTreeList + "";
+        
+        Label header = new Label(Listtype);
+        header.getStyleClass().add("NodeDetail");
+        Label content = new Label(list);
+        content.getStyleClass().add("NodeDetail");
+        Button close = new Button("Close");
+
+        close.getStyleClass().add("Button");
+        
+        close.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                pane_visual.getChildren().remove(pane);
+            }
+        });
+        
+        v.getChildren().add(header);
+        v.getChildren().add(content);
+        v.getChildren().add(close);
+        
+        pane.getChildren().add(v);
+        
+        pane_visual.getChildren().add(pane);
+
+        
     }
     
     public void BuildVisualTree(){
@@ -255,6 +368,8 @@ public class FXMLDocumentController implements Initializable {
         Vector<TextField> v = new Vector<TextField>();
         
         Pane container = new Pane();
+        container.setLayoutX(10);
+        container.setLayoutY(10);
         container.getStyleClass().add("customNodePane");
         
         BorderPane br = new BorderPane();
@@ -340,7 +455,6 @@ public class FXMLDocumentController implements Initializable {
             public void handle(MouseEvent event) {
                 NodeDetailTitle = new Vector<String>();
                 for(int i = 0; i < v.size();i++){
-                    System.out.println("Text " + v.get(i).getText());
                     NodeDetailTitle.add(v.get(i).getText());
                 }
                 if(v.size() == 0){
@@ -525,6 +639,8 @@ public class FXMLDocumentController implements Initializable {
         Vector<TextField> detail = new Vector<TextField>();
         Vector<String> detailText = new Vector<String>();
         Pane container = new Pane();
+        container.setLayoutX(10);
+        container.setLayoutY(10);
         container.getStyleClass().add("customNodePane");
         
         BorderPane br = new BorderPane();
@@ -847,6 +963,7 @@ public class FXMLDocumentController implements Initializable {
         return newLine;
     }
 
+
     
     // Class node
     class Node {
@@ -1000,7 +1117,7 @@ public class FXMLDocumentController implements Initializable {
                 }
             });
 
-            if(nodeDetails != null){
+            if(this.nodeDetails != null){
                 list.getChildren().add(selection0);
             }
             list.getChildren().add(selection1);

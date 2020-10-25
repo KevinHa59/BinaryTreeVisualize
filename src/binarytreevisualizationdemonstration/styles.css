@@ -59,7 +59,7 @@ and open the template in the editor.
     -fx-background-color: #3c3f41;
 }
 .Pane_Header{
-    -fx-background-color: #3c3f41;
+    -fx-background-color: transparent;
     -fx-text-fill: #bbbbbb;
 
 }

@@ -144,7 +144,40 @@
                            </children>
                         </AnchorPane>
                         <Separator layoutX="628.0" layoutY="10.0" opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
-                        <AnchorPane styleClass="Pane_Control">
+                        <AnchorPane prefHeight="135.0" prefWidth="181.0" styleClass="Pane_Control">
+                           <children>
+                              <Label alignment="CENTER" layoutX="33.0" layoutY="10.0" styleClass="Pane_Header" text="Travesal Tree" AnchorPane.leftAnchor="1.0" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="5.0">
+                                 <font>
+                                    <Font name="System Bold" size="15.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" layoutX="5.0" layoutY="14.0" onMouseClicked="#OnShowTravesalTreeClicked" prefHeight="33.0" prefWidth="50.0" styleClass="Button" text="Show" AnchorPane.bottomAnchor="5.0" AnchorPane.rightAnchor="10.0">
+                                 <font>
+                                    <Font size="16.0" />
+                                 </font>
+                              </Label>
+                              <RadioButton fx:id="cbox_inorder" layoutX="14.0" layoutY="34.0" mnemonicParsing="false" styleClass="Pane_Header" text="In-order" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="30.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                                 <toggleGroup>
+                                    <ToggleGroup fx:id="Travesal" />
+                                 </toggleGroup>
+                              </RadioButton>
+                              <RadioButton fx:id="cbox_preorder" layoutX="14.0" layoutY="59.0" mnemonicParsing="false" styleClass="Pane_Header" text="Pre-order" toggleGroup="$Travesal" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="65.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton fx:id="cbox_postorder" layoutX="11.0" layoutY="97.0" mnemonicParsing="false" styleClass="Pane_Header" text="Post-order" toggleGroup="$Travesal" AnchorPane.leftAnchor="11.0" AnchorPane.topAnchor="100.0">
+                                 <font>
+                                    <Font size="15.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                        </AnchorPane>
+                        <Separator layoutX="884.0" layoutY="10.0" opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
+                        <AnchorPane layoutX="944.0" layoutY="10.0" styleClass="Pane_Control">
                            <children>
                               <Label alignment="CENTER" layoutX="5.0" layoutY="14.0" onMouseClicked="#OnResetStyleNodeClicked" prefHeight="33.0" prefWidth="156.0" styleClass="Button" text="Reset Highlight" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="14.0">
                                  <font>
@@ -153,7 +186,7 @@
                               </Label>
                            </children>
                         </AnchorPane>
-                        <Separator layoutX="884.0" layoutY="10.0" opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
+                        <Separator layoutX="1110.0" layoutY="10.0" opacity="0.15" orientation="VERTICAL" prefHeight="200.0" />
                      </children>
                   </HBox>
                </children>
